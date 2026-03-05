@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center text-center mt-5">
+    <div class="col-md-8">
+        <h1 class="display-4 text-danger"> welkom bij Hanze dating</h1>
+        <p class="lead mt-3">Je kunt pas rondkijken als je een eigen profiel hebt gemaakt.</p>
+        <hr class="my-4">
+
+        <div class="mt-4">
+            <a class="btn btn-danger btn-lg me-2" href="{{ url_for('registreer') }}">Maak hier je account aan!</a>
+            <a class="btn btn-outline-danger btn-lg " href="{{ url_for('login') }}">log hier in!</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

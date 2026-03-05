@@ -55,14 +55,22 @@ def login():
 
         conn = get_db_connection()
         gebruiker = conn.execute('SELECT * FROM gebruikers WHERE gebruikersnaam = ?', (gebruikersnaam,)).fetchone()
-        conn.close()
 
         if gebruiker and check_password_hash(gebruiker['wachtwoord'], wachtwoord):
             session['gebruiker_id'] = gebruiker['id']
             session['gebruikersnaam'] = gebruiker['gebruikersnaam']
-            flash('Succesvol ingelogd! Welkom terug.', 'success')
-            return redirect(url_for('profielen'))
+            
+            profiel = conn.execute('SELECT * FROM profielen WHERE gebruiker_id = ?', (gebruiker['id'],)).fetchone()
+            conn.close()
+            
+            if profiel:
+                flash('Succesvol ingelogd! Welkom terug.', 'success')
+                return redirect(url_for('profielen'))
+            else:
+                flash('Welkom! Maak eerst even je profiel aan voordat je kunt rondkijken.', 'info')
+                return redirect(url_for('maak_profiel'))
         else:
+            conn.close()
             flash('Verkeerde gebruikersnaam of wachtwoord', 'danger')
 
     return render_template('login.html')
@@ -74,10 +82,57 @@ def uitloggen():
     flash('Je bent succesvol uitgelogd. Tot ziens!', 'info')
     return redirect(url_for('index'))
 
+#profiel maken
+@app.route('/maak_profiel', methods=['GET', 'POST'])
+def maak_profiel():
+    if 'gebruiker_id' not in session:
+        flash('Je moet ingelogd zijn om een profiel aan te maken.', 'warning')
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        naam = request.form['naam']
+        leeftijd = request.form['leeftijd']
+        geslacht = request.form['geslacht']
+        foto_url = request.form['foto_url']
+        bio = request.form['bio']
+        gebruiker_id = session['gebruiker_id']
+
+        conn = get_db_connection()
+        try:
+            conn.execute('''
+                        INSERT INTO profielen (gebruiker_id, naam, leeftijd, geslacht, foto_url, bio)   
+                        VALUES (?, ?, ?, ?, ?, ?)                        
+                    ''', (gebruiker_id, naam, leeftijd, geslacht, foto_url, bio))
+            conn.commit()
+
+            flash('Je profiel is succesvol aangemaakt! je kunt nu rondkijken.', 'success')
+            return redirect(url_for('profielen'))
+        except sqlite3.IntegrityError:
+            flash('Je hebt al een profiel!', 'warning')
+            return redirect(url_for('profielen'))
+        finally:
+            conn.close()
+        
+    return render_template('maak_profiel.html')
+
 #route naar profielen
 @app.route('/profielen')
 def profielen():
-    return "<h1>Hier komt straks de profielen pagina te staan</h1>"
+    if 'gebruiker_id' not in session:
+        flash('Je moet ingelogd zijn om de singles te bekijken.', 'warning')
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    mijn_profiel = conn.execute('SELECT * FROM profielen WHERE gebruiker_id = ?', (session['gebruiker_id'],)).fetchone()
+
+    if not mijn_profiel:
+        conn.close()
+        flash('Je mag pas rondkijken als je zelf een profiel hebt gemaakt.', 'danger')
+        return redirect(url_for('maak_profiel'))
+
+
+    andere_singles = conn.execute('SELECT * FROM profielen WHERE gebruiker_id != ?', (session['gebruiker_id'],)).fetchall()
+    conn.close()
+    return render_template('profielen.html', profielen=andere_singles)
 
 #server start
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
 # Dating website voor de hanze
-Dit is de website voor webtechnologie eerstejaars. Gemaakt door Job en Liron
+Dit is de website voor **webtechnologie** eerstejaars. Gemaakt door Job & Liron.
 
-test hem uit probeer wat en geniet ervan.
+Test hem uit probeer wat en geniet ervan.

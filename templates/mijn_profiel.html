@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm">
+                <div class="card header bg-dark text-white">
+                    <h3 class="mb-0">Mijn profiel</h3>
+                </div>
+
+                <div class="card-body row align-items-center">
+                    <div class="col-md-4 text-center mb-4 mb-md-0">
+                        {% if profiel['foto_url'] %}
+                        <img src="{{ profiel['foto_url'] }}" alt="Profielfoto van {{ profiel['naam'] }}" class="img-fluid rounded-circle shadow">
+                        {% else %}
+                        <img src="https://placehold.co/180" alt="Standaard foto" class="img-fluid rounded-circle shadow">
+                        {% endif %}
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

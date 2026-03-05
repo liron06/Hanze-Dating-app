@@ -134,6 +134,26 @@ def profielen():
     conn.close()
     return render_template('profielen.html', profielen=andere_singles)
 
+#mijn profiel functie
+@app.route('/mijn_profiel')
+def mijn_profiel():
+    if 'gebruiker_id' not in session:
+        flash('Je moet ingelogd zijn om je profiel te bekijken.', 'warning')
+        return redirect(url_for('index'))
+
+    huidige_gebruiker_id = session['gebruiker_id']
+
+    conn = get_db_connection()
+    mijn_gegevens = conn.execute('SELECT * FROM profielen WHERE id = ?', (huidige_gebruiker_id,)).fetchone()
+    conn.close()
+
+    if not mijn_gegevens:
+        flash('Je hebt nog geen profiel aangemaakt!', 'info')
+        return redirect(url_for('maak_profiel'))
+
+    return render_template('mijn_profiel.html', profiel=mijn_gegevens)
+
+
 #server start
 if __name__ == '__main__':
     app.run(debug=True)

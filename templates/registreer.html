@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="card-title mb-0">Account aanmaken</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+
+                    <div class="mb-3">
+                        <label for="gebruikersnaam" class="form-label">Gebruikersnaam</label>
+                        <input type="text" class="form-control" id="gebruikersnaam" name="gebruikersnaam" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="wachtwoord" class="form-label">Wachtwoord</label>
+                        <input type="password" class="form-control" name="wachtwoord" id="wachtwoord" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger w-100">Registreren</button>
+                    
+                </form>
+            </div>
+            <div class="card-footer text-center bg-transparent">
+                <small class="text-muted">Heb je al een account? <a href="{{ url_for('login') }}">Log hier in</a>.</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

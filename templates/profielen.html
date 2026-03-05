@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4 mb-4">
+    <div class="col-12 text-center">
+        <h1 class="display-5 text-danger">Alle singles</h1>
+        <p class="lead">Vind jou perfecte match</p>
+        <hr>
+    </div>
+</div>
+
+
+<div class="row">
+    {% if profielen %}
+
+        {% for profiel in profielen %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-danger">
+
+                <img src="{{ profiel['foto_url'] }}" class="card-img-top" alt="Foto van {{ profiel['naam'] }}" style="height: 250px; object-fit: cover;">
+
+                <div class="card-body">
+                    <h5 class="card-title text-danger">
+                        {{ profiel['naam'] }} <span class="badge bg-secondary float-end">{{ profiel['leeftijd'] }}</span>
+                    </h5>
+
+                    <h6 class="card-subtitle mb-2 text-muted">{{ profiel['geslacht'] }}</h6>
+
+                    <p class="card-text mt-3">{{ profiel['bio'] }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12 text-center mt-5">
+            <div class="alert alert-info">
+                <h4>Je bent de allereerste!</h4>
+                <p>Er zijn op dit moment nog geen andere singles geregistreerd. kom later nog eens terug!</p>
+            </div>
+        </div>
+        {% endif %}
+</div>
+{% endblock %}

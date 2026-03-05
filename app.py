@@ -10,7 +10,7 @@ app.secret_key = 'hanze_super_geheim_2026'
 #voor makkelijk db te openen
 def get_db_connection():
     conn = sqlite3.connect('datingsite.db')
-    conn.row_factory = sqlite3.row
+    conn.row_factory = sqlite3.Row
     return conn
 
 
@@ -29,7 +29,7 @@ def registreer():
 
         gehasht_wachtwoord = generate_password_hash(wachtwoord)
 
-        conn = get_db_connection
+        conn = get_db_connection()
 
         try:
             conn.execute('INSERT INTO gebruikers (gebruikersnaam, wachtwoord) VALUES (?, ?)',
@@ -47,9 +47,32 @@ def registreer():
     return render_template('registreer.html')
 
 #route naar Loginpagina
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return "<h1>Hier komt straks de login pagina te staan</h1>"
+    if request.method == 'POST':
+        gebruikersnaam = request.form['gebruikersnaam']
+        wachtwoord = request.form['wachtwoord']
+
+        conn = get_db_connection()
+        gebruiker = conn.execute('SELECT * FROM gebruikers WHERE gebruikersnaam = ?', (gebruikersnaam,)).fetchone()
+        conn.close()
+
+        if gebruiker and check_password_hash(gebruiker['wachtwoord'], wachtwoord):
+            session['gebruiker_id'] = gebruiker['id']
+            session['gebruikersnaam'] = gebruiker['gebruikersnaam']
+            flash('Succesvol ingelogd! Welkom terug.', 'success')
+            return redirect(url_for('profielen'))
+        else:
+            flash('Verkeerde gebruikersnaam of wachtwoord', 'danger')
+
+    return render_template('login.html')
+
+#uitloggen
+@app.route('/uitloggen')
+def uitloggen():
+    session.clear()
+    flash('Je bent succesvol uitgelogd. Tot ziens!', 'info')
+    return redirect(url_for('index'))
 
 #route naar profielen
 @app.route('/profielen')

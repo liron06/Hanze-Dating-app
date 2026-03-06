@@ -1,11 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 
 app = Flask(__name__)
 
 #de geheime sleutel
-app.secret_key = 'hanze_super_geheim_2026'
+app.secret_key = 'SECRET_KEY'
 
 #voor makkelijk db te openen
 def get_db_connection():

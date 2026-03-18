@@ -11,7 +11,7 @@ load_dotenv()
 app = Flask(__name__)
 
 #de geheime sleutel
-app.secret_key = os.getenv('SECRET_KEY')
+app.secret_key = 'SECRET_KEY'
 
 #voor makkelijk db te openen
 def get_db_connection():
